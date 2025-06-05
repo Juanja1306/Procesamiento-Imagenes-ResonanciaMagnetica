@@ -1,0 +1,55 @@
+cmake_minimum_required(VERSION 3.10)
+project(HolaMundoCpp)
+
+set(CMAKE_CXX_STANDARD 17)
+
+# ---------------------------------------
+# 1. Encuentra los paquetes necesarios
+# ---------------------------------------
+
+# OpenCV (ya lo tenías)
+find_package(OpenCV REQUIRED)
+
+# Qt5 Widgets (ya lo tenías)
+find_package(Qt5 COMPONENTS Widgets REQUIRED)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+# ITK (agrega esto)
+# Puedes fijar ITK_DIR si es necesario:
+# set(ITK_DIR "/usr/lib/x86_64-linux-gnu/cmake/ITK-5.4")
+find_package(ITK REQUIRED)
+include(${ITK_USE_FILE})
+
+# ---------------------------------------
+# 2. Lista de fuentes
+# ---------------------------------------
+
+set(SOURCES
+    Principal.cpp
+    Utils.cpp
+    Filtros.cpp
+)
+
+# ---------------------------------------
+# 3. Crea el ejecutable y enlaza bibliotecas
+# ---------------------------------------
+
+add_executable(HolaMundoCpp ${SOURCES})
+
+# Incluye directorios (si los necesitas explícitamente)
+include_directories(
+    ${CMAKE_SOURCE_DIR}
+    ${OpenCV_INCLUDE_DIRS}
+    ${Qt5Widgets_INCLUDE_DIRS}
+    ${ITK_INCLUDE_DIRS}
+)
+
+# Enlaza bibliotecas
+target_link_libraries(HolaMundoCpp
+    PRIVATE
+    Qt5::Widgets
+    ${OpenCV_LIBS}
+    ${ITK_LIBRARIES}
+)
