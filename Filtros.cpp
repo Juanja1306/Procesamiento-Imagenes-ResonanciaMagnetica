@@ -10,7 +10,7 @@
 // Funciones Auxiliares: cada una aplica el filtro correspondiente
 // ----------------------------------------------------------
 
-// 1) Thresholding: ejemplo con umbral binario fijo (puedes parametrizar)
+// 1) Thresholding truncado
 cv::Mat aplicarThresholding(const cv::Mat& src)
 {
     cv::Mat gray, dst;
@@ -20,7 +20,7 @@ cv::Mat aplicarThresholding(const cv::Mat& src)
         gray = src;
     }
     double umbral = 80; // umbral fijo; podrías pedir input dinámico
-    cv::threshold(gray, dst, umbral, 255, cv::THRESH_BINARY);
+    cv::threshold(gray, dst, umbral, 255, cv::THRESH_BINARY_INV);
     return dst;
 }
 
@@ -50,7 +50,7 @@ cv::Mat aplicarBinarizacionColor(const cv::Mat& src)
     if (src.channels() == 1)
     {
         cv::Mat dst;
-        double umbral = 70; // puedes ajustar este valor o parametrizarlo
+        double umbral = 80; // puedes ajustar este valor o parametrizarlo
         cv::threshold(src, dst, umbral, 255, cv::THRESH_BINARY);
         return dst;
     }
@@ -59,7 +59,7 @@ cv::Mat aplicarBinarizacionColor(const cv::Mat& src)
     cv::Mat hsv, mask;
     cv::cvtColor(src, hsv, cv::COLOR_BGR2HSV);
 
-    // Ejemplo: binarizar tonos de rojo (ajusta los rangos según tu caso)
+    // Ejemplo: binarizar tonos de rojo 
     cv::Scalar lower_red1(0, 120, 70);
     cv::Scalar upper_red1(10, 255, 255);
     cv::Scalar lower_red2(170, 120, 70);
