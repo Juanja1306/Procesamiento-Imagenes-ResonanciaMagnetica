@@ -98,3 +98,9 @@ Si se esta corriendo en wsl la forma de acceder a los archivos desde el buscador
 ```bash
 \\wsl.localhost\kali-linux\home\juanja\Desktop\vision 
 ```
+
+## Notas
+* Recordar cambiar la ruta en `MainWindow.cpp`:
+```bash
+QString scriptPath = "/home/juanja/Desktop/vision/image_stats.py";
+```
