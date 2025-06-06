@@ -25,6 +25,7 @@ private slots:
     void onSliderValueChanged(int value);
     void onMakeVideo();
     void onOpenVideo();              // Slot para abrir el video
+    void onStats();                  // Slot para mostrar estadísticas
 
 private:
     // Rutas seleccionadas
@@ -52,6 +53,7 @@ private:
     // Botones “Hacer video” y “Abrir video”
     QPushButton *btnMakeVideo;
     QPushButton *btnOpenVideo;
+    QPushButton *btnStats;
 
     int numSlices;
 

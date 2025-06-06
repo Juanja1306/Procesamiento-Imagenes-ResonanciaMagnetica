@@ -2,7 +2,7 @@
 #include "MainWindow.h"
 #include "VideoDialog.h"
 #include "Utils.h"
-
+#include <QCoreApplication>
 #include <QFileDialog>
 #include <QMessageBox>
 #include <QDir>
@@ -16,6 +16,7 @@
 #include <QImage>
 #include <QDesktopServices>
 #include <QUrl>
+#include <QProcess>
 #include <filesystem>
 
 MainWindow::MainWindow(QWidget *parent)
@@ -39,7 +40,7 @@ MainWindow::MainWindow(QWidget *parent)
     comboFilter->addItem("3) Binarización por umbral de color");
     comboFilter->addItem("4) Operaciones lógicas (NOT, AND, OR, XOR)");
     comboFilter->addItem("5) Detección de bordes");
-    comboFilter->addItem("6) Manipulación de píxeles");
+    comboFilter->addItem("6) Manipulación de píxeles (Orig+(Top-Black))");
     comboFilter->addItem("7) Filtros de suavizado");
     comboFilter->addItem("8) Operaciones morfológicas");
     comboFilter->addItem("9) Segmentación Watershed");
@@ -65,6 +66,10 @@ MainWindow::MainWindow(QWidget *parent)
     btnOpenVideo   = new QPushButton("Abrir video");
     btnOpenVideo->setEnabled(false);  // Desactivado hasta que se genere un video
 
+    // Nuevo botón “Sacar Estadísticas”
+    btnStats       = new QPushButton("Sacar Estadísticas");
+    btnStats->setEnabled(false);      // Desactivado hasta que haya al menos un slice
+
     // ----- 2) Conectar señales y slots -----
     connect(btnLoadImage,   &QPushButton::clicked, this, &MainWindow::onLoadImage);
     connect(btnLoadMask,    &QPushButton::clicked, this, &MainWindow::onLoadMask);
@@ -72,6 +77,7 @@ MainWindow::MainWindow(QWidget *parent)
     connect(sliderSlice,    &QSlider::valueChanged, this, &MainWindow::onSliderValueChanged);
     connect(btnMakeVideo,   &QPushButton::clicked, this, &MainWindow::onMakeVideo);
     connect(btnOpenVideo,   &QPushButton::clicked, this, &MainWindow::onOpenVideo);
+    connect(btnStats,       &QPushButton::clicked, this, &MainWindow::onStats);
 
     // ----- 3) Layout general -----
     QWidget *central = new QWidget(this);
@@ -110,10 +116,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     mainLayout->addWidget(sliderSlice);
 
-    // HBox para los dos botones: “Hacer video” y “Abrir video”
+    // HBox para los dos botones: “Hacer video” y “Abrir video” y “Sacar Estadísticas”
     QHBoxLayout *hVideo = new QHBoxLayout();
     hVideo->addWidget(btnMakeVideo);
     hVideo->addWidget(btnOpenVideo);
+    hVideo->addWidget(btnStats);
     mainLayout->addLayout(hVideo);
 
     setCentralWidget(central);
@@ -178,8 +185,9 @@ void MainWindow::onApplyFilter()
     }
     QDir().mkpath(carpetaSalidaBase + "highlighted/");
 
-    // Desactivar el botón “Abrir video” cada vez que se vuelva a aplicar un filtro
+    // Desactivar los botones “Abrir video” y “Sacar Estadísticas” cada vez que se vuelva a aplicar un filtro
     btnOpenVideo->setEnabled(false);
+    btnStats->setEnabled(false);
 
     // Seleccionar filtro (1–10)
     int idx = comboFilter->currentIndex();
@@ -227,11 +235,16 @@ void MainWindow::updateSliderRange()
         sliderSlice->setMaximum(numSlices - 1);
         sliderSlice->setValue(0);
         onSliderValueChanged(0);
+
+        // Ahora que hay slices, habilitar el botón de estadísticas
+        btnStats->setEnabled(true);
+
     } else {
         sliderSlice->setEnabled(false);
         lblOriginalView->setText("Sin original");
         lblMaskView->setText("Sin máscara");
         lblFilteredView->setText("Sin filtrada");
+        btnStats->setEnabled(false);
     }
 }
 
@@ -351,4 +364,40 @@ void MainWindow::onOpenVideo()
 
     // Abrir con la aplicación predeterminada
     QDesktopServices::openUrl(QUrl::fromLocalFile(videoPath));
+}
+
+void MainWindow::onStats()
+{
+    // 1) Verificar que haya slices
+    if (numSlices <= 0) {
+        QMessageBox::warning(this, "Error", "No hay imágenes cargadas para calcular estadísticas.");
+        return;
+    }
+
+    // 2) Determinar índice actual del slider (0-based) y construir ruta a la imagen “highlighted”
+    int idxSlice = sliderSlice->value();
+    QString nombreSlice = QString("slice_%1.png").arg(idxSlice, 3, 10, QChar('0'));
+    QString rutaImagen = carpetaSalidaBase + "highlighted/" + nombreSlice;
+
+    // 3) Verificar que el archivo exista
+    if (!QFile::exists(rutaImagen)) {
+        QMessageBox::warning(this, "Error", "No se encontró la imagen:\n" + rutaImagen);
+        return;
+    }
+
+    // 4) Invocar el script Python que genera las estadísticas
+    //    Supondremos que el script se llama "image_stats.py" y está en el mismo directorio que el ejecutable
+    QString scriptPath = "/home/juanja/Desktop/vision/image_stats.py";
+    if (!QFile::exists(scriptPath)) {
+        QMessageBox::warning(this, "Error", "No se encontró el script de estadísticas:\n" + scriptPath);
+        return;
+    }
+
+    // Llamamos a "python3 image_stats.py <rutaImagen>"
+    QStringList args;
+    args << scriptPath << rutaImagen;
+    bool started = QProcess::startDetached("python3", args);
+    if (!started) {
+        QMessageBox::warning(this, "Error", "No se pudo ejecutar el script de Python.");
+    }
 }
