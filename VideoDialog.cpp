@@ -1,3 +1,4 @@
+// VideoDialog.cpp
 #include "VideoDialog.h"
 #include <QSpinBox>
 #include <QLabel>
