@@ -1,4 +1,3 @@
-
 # Filtros para Imagenes de Resonancia Magnetica ProcessorQt
 
 ## Descripción
@@ -29,8 +28,9 @@ RMProcessorQt es una aplicación de escritorio (Qt) para el procesamiento de vol
 - ITK.
 - Python3 con los módulos: `numpy`, `matplotlib`, `tkinter`, `opencv-python`.
 
-## Instalación del wsl
-`https://www.notion.so/WSL-con-Kali-y-GUI-203ae96cf28d80c9b2c4d497c846e439?source=copy_link`
+## Instalación de WSL
+
+Para instalar y configurar WSL2 con Kali Linux y soporte de GUI, consultar la [Guía Completa en Notion](https://www.notion.so/WSL-con-Kali-y-GUI-203ae96cf28d80c9b2c4d497c846e439?source=copy_link).
 
 ## Instalación del proyecto
 
