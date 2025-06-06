@@ -29,7 +29,10 @@ RMProcessorQt es una aplicación de escritorio (Qt) para el procesamiento de vol
 - ITK.
 - Python3 con los módulos: `numpy`, `matplotlib`, `tkinter`, `opencv-python`.
 
-## Instalación
+## Instalación del wsl
+`https://www.notion.so/WSL-con-Kali-y-GUI-203ae96cf28d80c9b2c4d497c846e439?source=copy_link`
+
+## Instalación del proyecto
 
 ```bash
 # En el directorio raíz del proyecto
