@@ -104,3 +104,7 @@ Si se esta corriendo en wsl la forma de acceder a los archivos desde el buscador
 ```bash
 QString scriptPath = "/home/juanja/Desktop/vision/image_stats.py";
 ```
+* Si da error de persmisos, introducir el siguietne comando:
+```bash
+sudo chmod 0700 /run/user/1000
+```
