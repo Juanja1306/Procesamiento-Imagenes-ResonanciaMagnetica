@@ -20,7 +20,7 @@ RMProcessorQt es una aplicación de escritorio (Qt) para el procesamiento de vol
 
 ## Requisitos
 
-- Linux (probado en WSL2 / Kali Linux).
+- Linux probado en: WSL2 / Kali Linux y Kubuntu 24.04 LTS.
 - CMake >= 3.10.
 - Compilador con soporte C++17.
 - Qt5 Widgets.
