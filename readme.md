@@ -4,7 +4,7 @@ mkdir build_test && cd build_test && cmake .. && make
 
 
 
-\\wsl.localhost\kali-linux\home\juanja\Desktop\vision\build_test\Output\video
+\\wsl.localhost\kali-linux\home\juanja\Desktop\vision
 
 rm -rf CMakeCache.txt CMakeFiles
 cmake ..
